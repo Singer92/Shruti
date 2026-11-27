@@ -55,6 +55,11 @@ button.link{margin-top:0!important}
 #done{margin-top:10px}
 #done:disabled{opacity:.4}
 #main{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center}
+.demo{width:100%;max-width:420px;margin-top:26px;background:var(--gold);border:2px solid var(--ink);border-radius:20px;padding:18px 16px;text-align:center;box-shadow:5px 5px 0 var(--ink)}
+.demo b{display:block;font-family:Georgia,serif;font-style:italic;font-size:24px}
+.demo p{margin:4px 0 12px;font-size:15px}
+.demo a{display:block;background:var(--ink);color:var(--gold);font-weight:800;font-size:17px;text-decoration:none;border-radius:12px;padding:13px 10px}
+.demo a+a{background:none;color:var(--ink);font-size:14px;text-decoration:underline;padding:10px 0 0}
 .foot{margin-top:26px;font-size:13px;color:var(--muted);text-align:center;line-height:1.6;max-width:420px}
 .foot a{color:var(--gold-deep);font-weight:700}
 </style></head><body>
@@ -96,6 +101,10 @@ button.link{margin-top:0!important}
   <p class="note2">Tip: use earphones so the tanpura is not picked up by the microphone.</p>
 </div>
 </div>
+
+<div class="demo"><b>New here? Learn with Geethaalayam</b><p>Carnatic vocal and light music classes for children (5+) and adults, in person and online.</p>
+<a href="https://wa.me/917639333663?text=Hi%2C%20I%20would%20like%20to%20book%20a%20free%20demo%20class%20at%20Geethaalayam." target="_blank" rel="noopener">Book a free demo class</a>
+<a href="https://singer92.github.io/Geethaalayam/">Visit our website</a></div>
 
 <p class="foot">Tip: in your phone browser menu choose <b>Add to Home screen</b> to open Shruti Check like an app.<br>Questions? <a href="https://wa.me/917639333663?text=Hi%2C%20I%20need%20help%20with%20Shruti%20Check." rel="noopener" target="_blank">WhatsApp 76393 33663</a></p>
 
@@ -229,42 +238,61 @@ function loop(){
 }
 
 // ---- Tanpura drone (synthesised, no audio files) ----
-let droneOn=false,dctx,dmaster,dtimer,dstep=0,wave;
+// Strings are plucked in a steady cycle (Pa/Ma, Sa, Sa, low Sa). Each string rings long enough
+// to overlap the next pluck, so the drone never drops out. Plucks are scheduled ahead on the
+// audio clock, so the sound stays steady even if the page is busy.
+let droneOn=false,dctx,dmaster,dtimer,dstep=0,wave,nextT=0;
+const PLUCK_GAP=1.25;
 function startDrone(){
   if(!kSet){openPicker();return}
   if(!dctx){
     dctx=new (window.AudioContext||window.webkitAudioContext)();
-    dmaster=dctx.createGain();dmaster.gain.value=$('dvol').value/100*0.5;dmaster.connect(dctx.destination);
+    const comp=dctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;comp.connect(dctx.destination);
+    dmaster=dctx.createGain();dmaster.gain.value=$('dvol').value/100*0.5;dmaster.connect(comp);
     const n=24,re=new Float32Array(n+1),im=new Float32Array(n+1);
     for(let i=1;i<=n;i++)im[i]=1/Math.pow(i,0.9)*(i%2?1:0.8);
     wave=dctx.createPeriodicWave(re,im);
   }
-  dctx.resume();droneOn=true;dstep=0;
+  dctx.resume();droneOn=true;dstep=0;nextT=dctx.currentTime+0.05;
   $('dbtn').textContent='⏹ Stop Tanpura';$('dbtn').classList.add('on');
-  pluck();dtimer=setInterval(pluck,1250);
+  schedule();dtimer=setInterval(schedule,100);
+}
+function schedule(){
+  if(!dctx)return;
+  while(nextT<dctx.currentTime+0.5){pluckAt(nextT);nextT+=PLUCK_GAP}
 }
 function stopDrone(){
   droneOn=false;clearInterval(dtimer);
-  if(dmaster){const t=dctx.currentTime;dmaster.gain.setTargetAtTime(0,t,0.15);
-    setTimeout(()=>{if(!droneOn&&dctx){dctx.close();dctx=null}},800)}
+  if(dmaster){const t=dctx.currentTime;dmaster.gain.setTargetAtTime(0,t,0.25);
+    setTimeout(()=>{if(!droneOn&&dctx){dctx.close();dctx=null}},1500)}
   $('dbtn').textContent='🎵 Play Tanpura';$('dbtn').classList.remove('on');
 }
-function pluck(){
+function pluckAt(t){
   const pa=+$('dstr').value*0.5;
   const f=[pa,1,1,0.5][dstep++%4]*sa();
-  const t=dctx.currentTime;
   for(const det of[-1.5,1.5]){
     const o=dctx.createOscillator();o.setPeriodicWave(wave);o.frequency.value=f;o.detune.value=det;
     const flt=dctx.createBiquadFilter();flt.type='lowpass';flt.Q.value=1;
-    flt.frequency.setValueAtTime(5000,t);flt.frequency.exponentialRampToValueAtTime(900,t+4);
+    flt.frequency.setValueAtTime(5000,t);flt.frequency.exponentialRampToValueAtTime(1700,t+6);
     const g=dctx.createGain();
-    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(0.35,t+0.03);
-    g.gain.exponentialRampToValueAtTime(0.0005,t+5.5);
-    o.connect(flt);flt.connect(g);g.connect(dmaster);o.start(t);o.stop(t+5.6);
+    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(0.3,t+0.04);
+    g.gain.exponentialRampToValueAtTime(0.15,t+5);          // still ringing when the same string is plucked again
+    g.gain.exponentialRampToValueAtTime(0.0005,t+8.5);
+    o.connect(flt);flt.connect(g);g.connect(dmaster);o.start(t);o.stop(t+8.6);
   }
 }
 $('dbtn').onclick=()=>droneOn?stopDrone():startDrone();
 $('dvol').oninput=e=>{if(dmaster)dmaster.gain.value=e.target.value/100*0.5};
 $('go').onclick=()=>running?stop():start();
+
+// Stop all sound when the student leaves the page, switches app or closes the tab
+function stopAll(){
+  try{if(running)stop()}catch(e){}
+  try{if(droneOn){droneOn=false;clearInterval(dtimer);$('dbtn').textContent='🎵 Play Tanpura';$('dbtn').classList.remove('on')}
+    if(dctx){dctx.close();dctx=null}}catch(e){}
+  try{if(lctx){lctx.close();lctx=null}}catch(e){}
+}
+addEventListener('pagehide',stopAll);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAll()});
 if(!kSet)openPicker();
 </script></body></html>
