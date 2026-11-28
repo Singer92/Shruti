@@ -16,7 +16,7 @@ body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;ba
 .back{font-size:13px;font-weight:700;color:var(--gold-deep);text-decoration:none;border:1.5px solid var(--gold-deep);border-radius:999px;padding:6px 12px;white-space:nowrap}
 h1{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:34px;margin:6px 0 2px;text-align:center}
 .sub{color:var(--muted);margin:0 0 16px;font-size:15px;text-align:center}
-#card{width:100%;max-width:420px;border-radius:28px;padding:28px 18px;text-align:center;background:#F1E6D0;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);transition:background .25s;color:var(--ink)}
+#card{width:100%;max-width:420px;border-radius:28px;padding:28px 18px;text-align:center;background:#F1E6D0;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);transition:background .1s;color:var(--ink)}
 #card.good{background:#2e9e5b;color:#fff}
 #card.low,#card.high{background:#e8912d;color:#fff}
 #card.far{background:#d6453d;color:#fff}
@@ -26,7 +26,7 @@ h1{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:34px;
 #note{font-size:42px;font-weight:800;margin-top:14px;min-height:52px}
 #meter{position:relative;height:16px;background:rgba(255,255,255,.6);border-radius:8px;margin:18px 6px 4px;border:1px solid rgba(20,20,20,.15)}
 #zone{position:absolute;top:0;bottom:0;left:35%;width:30%;background:rgba(46,158,91,.4)}
-#needle{position:absolute;top:-5px;width:6px;height:26px;border-radius:3px;background:var(--ink);left:50%;transition:left .08s;opacity:0}
+#needle{position:absolute;top:-5px;width:6px;height:26px;border-radius:3px;background:var(--ink);left:50%;transition:left .05s linear;opacity:0}
 .lbl{display:flex;justify-content:space-between;font-size:12px;opacity:.85;margin:0 6px}
 button{font:inherit;border:2px solid var(--ink);border-radius:16px;padding:15px 28px;font-size:20px;font-weight:700;background:var(--ink);color:var(--gold);margin-top:20px;width:100%;max-width:420px;cursor:pointer}
 button.stop{background:#8a2a2a;color:#fff}
@@ -62,6 +62,46 @@ button.link{margin-top:0!important}
 #micHelp ol{margin:6px 0 8px;padding-left:20px}
 #micHelp p{margin:6px 0 0;color:var(--muted);font-size:14px}
 #micHelp button{margin-top:10px;font-size:16px;padding:11px}
+#card{position:relative}
+#fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:26px}
+#fx span{position:absolute;font-size:30px;line-height:1;will-change:transform,opacity}
+.fl{animation:floatUp 1.6s ease-out forwards}
+.bs{animation:burst 1.3s ease-out forwards}
+@keyframes floatUp{0%{transform:translateY(0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translateY(-210px) translateX(var(--dx)) scale(1.25) rotate(var(--rot));opacity:0}}
+@keyframes burst{0%{transform:translate(0,0) scale(.4);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.5) rotate(var(--rot));opacity:0}}
+@keyframes bUp{0%,100%{transform:translateY(10px)}50%{transform:translateY(-14px)}}
+@keyframes bDown{0%,100%{transform:translateY(-10px)}50%{transform:translateY(14px)}}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+#icon.bUp{animation:bUp .7s ease-in-out infinite}
+#icon.bDown{animation:bDown .7s ease-in-out infinite}
+.ksw{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:14px;font-weight:700;font-size:17px;cursor:pointer;user-select:none}
+.ksw input{position:absolute;opacity:0;width:0;height:0}
+.ksw .trk{width:50px;height:28px;border-radius:14px;background:#cfc3ac;border:2px solid var(--ink);position:relative;transition:background .15s}
+.ksw .trk::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--ink);transition:transform .15s}
+.ksw input:checked+.trk{background:#f0b429}
+.ksw input:checked+.trk::after{transform:translateX(22px)}
+.ksw input:focus-visible+.trk{outline:3px solid var(--gold-deep)}
+#kids{display:none;width:100%;max-width:420px;margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:20px;padding:12px 14px;box-shadow:5px 5px 0 var(--ink)}
+.ktip{font-size:14px;line-height:1.4;color:var(--muted);background:#FFF3DF;border-radius:12px;padding:8px 10px}
+.krow{display:flex;align-items:center;gap:12px;margin-top:8px}
+.kstats{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;font-size:15px;line-height:1.35}
+#kStreak{grid-column:1/-1}
+.kstats b{font-size:19px}
+#kStreak{font-weight:700;color:#c2410c;font-size:14px}
+#ice{flex:none;overflow:visible;width:78px;height:110px}
+#ice .sc{opacity:0;transform:scale(.3);transform-box:fill-box;transform-origin:50% 100%;transition:transform .25s,opacity .2s}
+#ice .sc.on{opacity:1;transform:scale(1)}
+body.kids #card{order:1}
+body.kids #micPrev,body.kids #micHelp{order:2}
+body.kids #go{order:3}
+body.kids #kids{order:4;margin-top:16px}
+body.kids #shrow{order:5}
+body.kids .ksw{order:6}
+body.kids #drone{order:7}
+body.kids #card.low{background:#4c8fd6}
+body.kids #card.high{background:#f0a03a}
+body.kids #card.far{background:#8a7bd1}
+@media (prefers-reduced-motion:reduce){#icon.bUp,#icon.bDown{animation:none}}
 .demo{width:100%;max-width:420px;margin-top:26px;background:var(--gold);border:2px solid var(--ink);border-radius:20px;padding:18px 16px;text-align:center;box-shadow:5px 5px 0 var(--ink)}
 .demo b{display:block;font-family:Georgia,serif;font-style:italic;font-size:24px}
 .demo p{margin:4px 0 12px;font-size:15px}
@@ -93,6 +133,26 @@ button.link{margin-top:0!important}
   <div id="note"></div>
   <div id="meter"><div id="zone"></div><div id="needle"></div></div>
   <div class="lbl"><span>Low</span><span>In Shruti</span><span>High</span></div>
+<div id="fx"></div>
+</div>
+<div id="kids">
+  <div class="ktip"><b>How to play:</b> sing Sa and hold it. 1 second = 1 scoop 🍦. Hold 3 seconds to win an ice cream!</div>
+  <div class="krow">
+    <svg id="ice" viewBox="0 0 120 170" width="92" height="130" aria-hidden="true">
+      <polygon points="30,92 90,92 60,160" fill="#E1A24B" stroke="#B87A2E" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M40,100 L72,138 M52,96 L78,126 M68,96 L48,126 M80,98 L58,142" stroke="#B87A2E" stroke-width="1.6" fill="none"/>
+      <circle class="sc" id="sc1" cx="60" cy="82" r="29" fill="#F8A9C6" stroke="#d97aa0" stroke-width="2"/>
+      <circle class="sc" id="sc2" cx="60" cy="56" r="26" fill="#FFF0C7" stroke="#e6cf90" stroke-width="2"/>
+      <circle class="sc" id="sc3" cx="60" cy="33" r="23" fill="#9A6240" stroke="#6e4228" stroke-width="2"/>
+      <circle class="sc" id="scc" cx="60" cy="9" r="7" fill="#d62839"/>
+    </svg>
+    <div class="kstats">
+      <div>⭐ <b id="kStars">0</b> stars</div>
+      <div>🍦 <b id="kIce">0</b> won</div>
+      <div>⏱ <b id="kBest">0</b> s best</div>
+      <div id="kStreak"></div>
+    </div>
+  </div>
 </div>
 <div id="micPrev" style="display:none"><b class="t">Open the live page to use the microphone</b>
   <p style="margin:0 0 8px">This is a preview, so the microphone is switched off here. Open the page in Chrome:</p>
@@ -109,6 +169,7 @@ button.link{margin-top:0!important}
 </div>
 <div id="shrow"><div id="shruti"></div>
   <div class="sm"><button class="link" id="lis2">🔊 Listen to Sa</button><button class="link" id="chg">Change</button></div></div>
+<label class="ksw"><input type="checkbox" id="kidsToggle"><span class="trk"></span><span>⭐ Kids mode</span></label>
 <button id="go">Start</button>
 <div id="drone">
   <button id="dbtn">🎵 Play Tanpura</button>
@@ -234,27 +295,28 @@ async function start(){
     $('micPrev').style.display=live?'none':'block';$('micHelp').style.display=live?'block':'none';return}
   $('micHelp').style.display='none';$('micPrev').style.display='none';
   ctx=new (window.AudioContext||window.webkitAudioContext)();
-  const src=ctx.createMediaStreamSource(stream);an=ctx.createAnalyser();an.fftSize=4096;src.connect(an);
+  const src=ctx.createMediaStreamSource(stream);an=ctx.createAnalyser();an.fftSize=2048;src.connect(an);
   buf=new Float32Array(an.fftSize);running=true;$('go').textContent='Stop';$('go').className='stop';
   set('','👂','Listening…','Sing now','');loop();
 }
-function stop(){running=false;cancelAnimationFrame(raf);stream&&stream.getTracks().forEach(t=>t.stop());ctx&&ctx.close();
+function stop(){kidsReset();running=false;cancelAnimationFrame(raf);stream&&stream.getTracks().forEach(t=>t.stop());ctx&&ctx.close();
   $('go').textContent='Start';$('go').className='';set('','🎤','Press Start','Then sing Sa, or any swara','')}
 let tick=0;
 function loop(){
   raf=requestAnimationFrame(loop);
-  if(++tick%3)return;
+  if(++tick%2)return;
   an.getFloatTimeDomainData(buf);
   const r=detectPitch(buf,ctx.sampleRate);
-  if(!r||r.clarity<0.8){if(performance.now()-lastGood>700){hist=[];set('','👂','Listening…','Sing now','')}return}
+  if(!r||r.clarity<0.8){if(performance.now()-lastGood>450){hist=[];if(KID.on)kidsSilence();else set('','👂','Listening…','Sing now','')}return}
   lastGood=performance.now();
-  hist.push(r.freq);if(hist.length>5)hist.shift();
+  hist.push(r.freq);if(hist.length>3)hist.shift();
   const f=[...hist].sort((a,b)=>a-b)[hist.length>>1];
   const {name,cents}=analyse(f);
   const nl=document.getElementById('needle');
   const pos=50+Math.max(-1.6,Math.min(1.6,cents/tol))*15;
   const a=Math.abs(cents);
-  if(a<=tol)set('good','✅','You are in Shruti!','Well done, hold it',name);
+  if(KID.on)kidsFrame(a<=tol?'good':a<=tol*2?(cents<0?'low':'high'):(cents<0?'farlow':'farhigh'),name);
+  else if(a<=tol)set('good','✅','You are in Shruti!','Well done, hold it',name);
   else if(a<=tol*2)set(cents<0?'low':'high','⚠️',cents<0?'Slightly low':'Slightly high',cents<0?'Raise your voice a little ↑':'Lower your voice a little ↓',name);
   else set('far','❌','Missing Shruti',cents<0?'Too low, raise your voice ↑':'Too high, bring it down ↓',name);
   nl.style.opacity=1;nl.style.left=pos+'%';
@@ -303,6 +365,84 @@ function stopAll(){
 }
 addEventListener('pagehide',stopAll);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAll()});
+
+// ================= Kids mode: stars, ice creams and encouragement (visual only, no sounds) =================
+const KID={on:store.get('kids')==='1'};
+const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function jget(k,def){try{const v=JSON.parse(store.get(k));return v==null?def:v}catch(e){return def}}
+let kt=jget('ktoday',null); if(!kt||kt.d!==dkey(new Date()))kt={d:dkey(new Date()),stars:0,ice:0,best:0};
+let kdays=jget('kdays',[]); if(!Array.isArray(kdays))kdays=[];
+function saveKids(){store.set('ktoday',JSON.stringify(kt));store.set('kdays',JSON.stringify(kdays.slice(-90)))}
+function streakCount(){const have=new Set(kdays);const d=new Date();let n=0;
+  const todayDone=have.has(dkey(d)); if(!todayDone)d.setDate(d.getDate()-1);
+  while(have.has(dkey(d))){n++;d.setDate(d.getDate()-1)} return {n,todayDone}}
+function renderKids(){
+  $('kStars').textContent=kt.stars;$('kIce').textContent=kt.ice;$('kBest').textContent=(+kt.best).toFixed(1).replace(/\.0$/,'');
+  const st=streakCount();
+  $('kStreak').textContent=st.n>0?(`🔥 ${st.n} day${st.n>1?'s':''} in a row`+(st.todayDone?'':' · practise today!')):'🔥 Practise today to start a streak!';
+}
+function applyKidsUI(){
+  document.body.classList.toggle('kids',KID.on);
+  $('kids').style.display=KID.on?'block':'none';
+  $('kidsToggle').checked=KID.on;
+  $('icon').className='';
+  if(KID.on)renderKids();
+}
+$('kidsToggle').onchange=e=>{KID.on=e.target.checked;store.set('kids',KID.on?'1':'0');kidsReset();applyKidsUI();
+  if(running)set('','👂',KID.on?'Sing Sa and hold it':'Listening…',KID.on?'Build your ice cream 🍦':'Sing now','')};
+
+let holdStart=0,lastIn=0,holdStars=0,celebrateUntil=0,lastSpark=0;
+function scoops(n,cherry){['sc1','sc2','sc3'].forEach((id,i)=>$(id).classList.toggle('on',i<n));$('scc').classList.toggle('on',!!cherry)}
+function fxAdd(txt,cls,vars){
+  if(REDUCED)return; const box=$('fx'); if(box.childElementCount>30)return;
+  const e=document.createElement('span');e.textContent=txt;e.className=cls;
+  for(const k in vars)e.style.setProperty(k,vars[k]); e.style.left=vars.left;e.style.top=vars.top;
+  box.appendChild(e);setTimeout(()=>e.remove(),1700);
+}
+const R=(a,b)=>a+Math.random()*(b-a);
+function sparkle(n){for(let i=0;i<n;i++)fxAdd(['⭐','✨','🌟'][Math.floor(R(0,3))],'fl',{left:R(8,86)+'%',top:R(55,85)+'%','--dx':R(-40,40)+'px','--rot':R(-30,30)+'deg'})}
+function confetti(){for(let i=0;i<16;i++){const ang=R(0,Math.PI*2),dist=R(90,190);
+  fxAdd(['🎈','🌈','🏆','🍦','⭐','🎉','🌟'][Math.floor(R(0,7))],'bs',{left:'46%',top:'42%','--dx':Math.cos(ang)*dist+'px','--dy':Math.sin(ang)*dist+'px','--rot':R(-60,60)+'deg'})}}
+function endHold(){
+  if(holdStart&&lastIn>holdStart){const sec=(lastIn-holdStart)/1000;if(sec>kt.best){kt.best=Math.round(sec*10)/10;saveKids();renderKids()}}
+  holdStart=0;holdStars=0;
+}
+function kidsReset(){endHold();celebrateUntil=0;scoops(0,false);$('icon').className='';$('fx').innerHTML=''}
+function kidSet(cls,icon,msg,hint,note,anim){set(cls,icon,msg,hint,note);$('icon').className=anim||''}
+function kidsSilence(){
+  const now=performance.now(); if(now<celebrateUntil)return;
+  if(holdStart&&now-lastIn>350){endHold();scoops(0,false)}
+  kidSet('','👂','Sing Sa and hold it','Build your ice cream 🍦','');
+}
+function kidsFrame(state,name){
+  const now=performance.now();
+  if(now<celebrateUntil){lastIn=now;holdStart=celebrateUntil;holdStars=0;return}     // celebrating: hold restarts afterwards
+  if(celebrateUntil){celebrateUntil=0;scoops(0,false);renderKids()}
+  if(state==='good'){
+    if(!holdStart||now-lastIn>350){holdStart=now;holdStars=0}
+    lastIn=now;
+    const sec=(now-holdStart)/1000, whole=Math.floor(sec);
+    scoops(Math.min(3,whole),false);
+    while(holdStars<whole&&holdStars<3){holdStars++;kt.stars++;if(!kdays.includes(dkey(new Date())))kdays.push(dkey(new Date()));sparkle(3);saveKids();renderKids()}
+    if(now-lastSpark>380){lastSpark=now;sparkle(1)}
+    if(sec>=3){
+      kt.ice++;if(sec>kt.best)kt.best=Math.round(sec*10)/10;saveKids();renderKids();
+      scoops(3,true);confetti();if(navigator.vibrate)try{navigator.vibrate(80)}catch(e){}
+      celebrateUntil=now+1600;holdStart=celebrateUntil;holdStars=0;
+      kidSet('good','🍦','Yummy! Well done!','You won an ice cream! ⭐⭐⭐',name,'');
+      return;
+    }
+    kidSet('good','⭐','You are in Shruti!',`Keep holding... ${Math.ceil(3-sec)} more second${Math.ceil(3-sec)>1?'s':''}`,name,'');
+  }else{
+    if(holdStart&&now-lastIn>350){endHold();scoops(0,false)}
+    if(state==='low')kidSet('low','🐦','Reach up like a bird!','Sing a little higher ↑',name,'bUp');
+    else if(state==='high')kidSet('high','🛝','Slide down a little!','Sing a little lower ↓',name,'bDown');
+    else if(state==='farlow')kidSet('far','🐣','Fly up high!','Sing much higher, you can do it! ↑',name,'bUp');
+    else kidSet('far','🎢','Whoosh, slide down!','Sing much lower, you can do it! ↓',name,'bDown');
+  }
+}
+applyKidsUI();
 if(!kSet)openPicker();
 
 // Ask for the microphone as soon as the page opens, so the student can tap Allow before starting.
